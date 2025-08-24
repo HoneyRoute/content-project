@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adults Only — Creator Showcase (18+)</title>
+  <meta name="description" content="Adults‑only interactive portfolio to advertise NSFW videos and photos with filters, lightbox, trailer, age‑gate, and compliance pages." />
+  <!-- Default to noindex until you're ready -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0b0b0c" />
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"] },
+          colors: { brand: { 500: '#f97316', 600: '#ea580c' } },
+          boxShadow: { glow: '0 10px 40px -10px rgba(249,115,22,.45)' }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .lazy-media { opacity: 0; transition: opacity .3s ease; }
+    .lazy-media.is-loaded { opacity: 1; }
+    /* Safe Mode: blur all media until user confirms */
+    body.safe-mode .nsfw-blur { filter: blur(18px); }
+    body.safe-mode .nsfw-hint { opacity: 1; }
+    .nsfw-hint { pointer-events: none; opacity: 0; transition: opacity .2s ease; }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-display selection:bg-brand-500 selection:text-white">
+  <div aria-hidden class="fixed inset-0 -z-10 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black"></div>
+  <div aria-hidden class="fixed -z-10 left-1/2 -translate-x-1/2 top-[-140px] h-[520px] w-[760px] rounded-full blur-3xl opacity-20" style="background: radial-gradient(620px 220px at 50% 40%, rgba(249,115,22,.35), transparent 60%);"></div>
+
+  <!-- Age Gate (first visit) -->
+  <div id="ageGate" class="fixed inset-0 z-[200] hidden bg-black/85 backdrop-blur flex items-center justify-center p-6">
+    <div class="max-w-xl w-full rounded-3xl border border-white/10 bg-zinc-900/80 p-8 text-center">
+      <h1 class="text-3xl font-black">Adults Only (18+)</h1>
+      <p class="mt-3 text-zinc-300 text-sm">This site contains nudity and sexual content intended strictly for adults. By entering, you certify that you are at least 18 years old (or 21+ where required by law), that viewing adult content is legal in your area, and that all content you will see is between consenting adults.</p>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <button id="enterAdult" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 px-6 py-3 font-semibold shadow-glow"><i data-feather="shield"></i> I am 18+ — Enter</button>
+        <a href="https://www.google.com" class="inline-flex items-center gap-2 rounded-xl border border-white/15 hover:border-white/30 px-6 py-3 font-semibold"><i data-feather="x-circle"></i> Leave</a>
+      </div>
+      <label class="mt-4 inline-flex items-center gap-2 text-sm text-zinc-400"><input id="rememberAdult" type="checkbox" class="rounded border-white/20 bg-transparent"> Remember me on this device</label>
+      <p class="mt-4 text-xs text-zinc-400">All persons depicted are 18 years of age or older. 18 U.S.C. §2257 records are maintained by the designated custodian listed below.</p>
+    </div>
+  </div>
+
+  <!-- Sticky 18+ bar + Safe Mode toggle -->
+  <div class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-zinc-950/60 border-b border-white/10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#home" class="font-bold tracking-tight text-lg">Creator <span class="text-brand-500">NSFW</span></a>
+      <nav class="hidden md:flex items-center gap-6 text-sm text-zinc-300">
+        <a href="#gallery" class="hover:text-white">Gallery</a>
+        <a href="#pricing" class="hover:text-white">Unlock</a>
+        <a href="#compliance" class="hover:text-white">Compliance</a>
+        <a href="#faq" class="hover:text-white">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <label class="hidden sm:inline-flex items-center gap-2 text-xs text-zinc-300 select-none"><input id="safeToggle" type="checkbox" class="rounded border-white/20 bg-transparent"> Safe Mode</label>
+        <button id="openTrailerBtn" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 px-4 py-2 text-sm font-semibold shadow-glow"><i data-feather="play"></i> Trailer</button>
+        <a href="#pricing" class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-white/15 hover:border-white/30 px-4 py-2 text-sm font-semibold"><i data-feather="unlock"></i> Unlock</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section id="home" class="relative">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-black leading-tight">Premium <span class="text-brand-500">Adult</span> Videos & Photo Sets</h1>
+        <p class="mt-4 text-zinc-300 max-w-prose">A sleek NSFW promo page with age‑gate, Safe Mode blur, and a lightbox. Replace the sample media with your own clips & sets, and link out to your OnlyFans/ManyVids/RedGIFs/Store.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button id="heroTrailerBtn" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 px-5 py-3 text-sm font-semibold shadow-glow"><i data-feather="play"></i> Play Trailer</button>
+          <a href="#gallery" class="inline-flex items-center gap-2 rounded-xl border border-white/15 hover:border-white/30 px-5 py-3 text-sm font-semibold"><i data-feather="grid"></i> Browse Gallery</a>
+        </div>
+        <div class="mt-8 flex items-center gap-6 text-zinc-400 text-sm">
+          <div class="flex items-center gap-2"><i data-feather="video"></i> 100+ Clips</div>
+          <div class="flex items-center gap-2"><i data-feather="image"></i> 500+ Photos</div>
+          <div class="flex items-center gap-2"><i data-feather="lock"></i> Exclusive</div>
+        </div>
+      </div>
+      <div class="relative group">
+        <div class="absolute -inset-1 bg-gradient-to-tr from-brand-500/30 to-fuchsia-500/20 blur-2xl rounded-3xl opacity-70 group-hover:opacity-100 transition"></div>
+        <div class="relative rounded-3xl overflow-hidden border border-white/10 bg-zinc-900/60">
+          <div class="aspect-video bg-zinc-800">
+            <video id="heroVideo" class="w-full h-full object-cover lazy-media nsfw-blur" preload="metadata" muted playsinline poster="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop">
+              <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" type="video/mp4">
+            </video>
+            <div class="nsfw-hint absolute inset-0 grid place-items-center text-zinc-200 text-sm"><span class="rounded-full bg-black/60 backdrop-blur px-3 py-1 border border-white/10">Blurred in Safe Mode</span></div>
+          </div>
+          <div class="p-5 flex items-center justify-between">
+            <div>
+              <h3 class="font-semibold">NSFW Trailer</h3>
+              <p class="text-sm text-zinc-400">Tap play (unblur by disabling Safe Mode)</p>
+            </div>
+            <button id="playHeroBtn" class="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm"><i data-feather="play-circle"></i> Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social / CTA bar -->
+  <section class="border-y border-white/10 bg-gradient-to-r from-zinc-900/50 to-zinc-900/20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-4 justify-between text-sm">
+      <div class="flex items-center gap-4 text-zinc-300">
+        <a href="#" class="hover:text-white inline-flex items-center gap-2"><i data-feather="twitter"></i> X/Twitter</a>
+        <a href="#" class="hover:text-white inline-flex items-center gap-2"><i data-feather="reddit"></i> Reddit</a>
+        <a href="#" class="hover:text-white inline-flex items-center gap-2"><i data-feather="instagram"></i> Instagram</a>
+        <a href="#" class="hover:text-white inline-flex items-center gap-2"><i data-feather="external-link"></i> OnlyFans</a>
+        <a href="#" class="hover:text-white inline-flex items-center gap-2"><i data-feather="external-link"></i> ManyVids</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="copyLinkBtn" class="inline-flex items-center gap-2 rounded-lg border border-white/15 hover:border-white/30 px-3 py-2"><i data-feather="copy"></i> Copy Page Link</button>
+        <a href="#pricing" class="inline-flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/20 px-3 py-2"><i data-feather="unlock"></i> Unlock Full Access</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="gallery" class="py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+          <h2 class="text-3xl font-black">NSFW Gallery</h2>
+          <p class="text-zinc-400">Blurred in Safe Mode. Toggle off to preview. Tap a card to open the lightbox.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <div class="flex items-center gap-2 border border-white/10 rounded-xl p-1">
+            <button data-filter="all" class="filter-btn rounded-lg px-3 py-1.5 text-sm bg-white/10">All</button>
+            <button data-filter="video" class="filter-btn rounded-lg px-3 py-1.5 text-sm">Videos</button>
+            <button data-filter="photo" class="filter-btn rounded-lg px-3 py-1.5 text-sm">Photos</button>
+            <button data-filter="solo" class="filter-btn rounded-lg px-3 py-1.5 text-sm">Solo</button>
+            <button data-filter="collab" class="filter-btn rounded-lg px-3 py-1.5 text-sm">Collab</button>
+            <button data-filter="bts" class="filter-btn rounded-lg px-3 py-1.5 text-sm">BTS</button>
+          </div>
+          <div class="relative">
+            <i data-feather="search" class="absolute left-3 top-2.5 w-4 h-4 text-zinc-400"></i>
+            <input id="searchInput" type="search" placeholder="Search titles or tags" class="pl-9 pr-3 py-2 text-sm rounded-xl bg-zinc-900/60 border border-white/10 outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-zinc-500" />
+          </div>
+        </div>
+      </div>
+
+      <div id="grid" class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      <div id="emptyState" class="hidden mt-16 text-center text-zinc-400"><p>No items match your filters.</p></div>
+
+      <template id="mediaTemplate">
+        <article class="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 hover:bg-zinc-900/70 transition">
+          <div class="aspect-[4/5] bg-zinc-800 overflow-hidden relative">
+            <img class="thumb w-full h-full object-cover lazy-media hidden nsfw-blur" alt="" />
+            <video class="thumbVid w-full h-full object-cover lazy-media hidden nsfw-blur" preload="metadata" muted playsinline></video>
+            <div class="nsfw-hint absolute inset-0 grid place-items-center text-zinc-200 text-xs"><span class="rounded-full bg-black/60 backdrop-blur px-2 py-0.5 border border-white/10">Blurred in Safe Mode</span></div>
+          </div>
+          <div class="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 backdrop-blur px-2 py-1 text-[11px] border border-white/10">
+            <span class="typeChip">Video</span>
+          </div>
+          <div class="p-3">
+            <h3 class="line-clamp-1 text-sm font-semibold"></h3>
+            <p class="line-clamp-2 text-xs text-zinc-400 mt-1"></p>
+            <div class="flex flex-wrap gap-1 mt-2 text-[10px]"></div>
+          </div>
+          <button class="absolute inset-0 m-2 rounded-xl border border-white/20 opacity-0 group-hover:opacity-100 transition bg-black/0 group-hover:bg-black/20" aria-label="Open"></button>
+          <div class="absolute right-2 bottom-2 rounded-full bg-black/60 p-2 border border-white/10"><i data-feather="maximize-2" class="w-4 h-4"></i></div>
+        </article>
+      </template>
+    </div>
+  </section>
+
+  <!-- Pricing / Unlock -->
+  <section id="pricing" class="py-16 border-t border-white/10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-black">Unlock Full Access</h2>
+      <p class="text-zinc-400">Connect these buttons to your paid platforms. Prices are placeholders.</p>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-white/10 bg-zinc-900/50 p-6">
+          <h3 class="font-bold text-lg">Starter</h3>
+          <p class="text-sm text-zinc-400">Casual fans</p>
+          <div class="mt-4 text-3xl font-black">$9<span class="text-base text-zinc-400">/mo</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-300">
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> Weekly teasers</li>
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> 10 photo sets</li>
+            <li class="flex items-center gap-2"><i data-feather="x" class="w-4 h-4 text-zinc-500"></i> Behind‑the‑scenes</li>
+          </ul>
+          <a href="#" class="mt-6 inline-flex w-full justify-center rounded-xl bg-brand-500 hover:bg-brand-600 px-4 py-2 font-semibold">Join on OnlyFans</a>
+        </div>
+        <div class="rounded-3xl border border-brand-500/30 bg-gradient-to-b from-brand-500/10 to-zinc-900/50 p-6 shadow-glow">
+          <h3 class="font-bold text-lg">Pro</h3>
+          <p class="text-sm text-zinc-200">Most popular</p>
+          <div class="mt-4 text-3xl font-black">$19<span class="text-base text-zinc-400">/mo</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-100">
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> All teasers</li>
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> 50 photo sets</li>
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> Behind‑the‑scenes</li>
+          </ul>
+          <a href="#" class="mt-6 inline-flex w-full justify-center rounded-xl bg-brand-500 hover:bg-brand-600 px-4 py-2 font-semibold">Subscribe on ManyVids</a>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-zinc-900/50 p-6">
+          <h3 class="font-bold text-lg">VIP</h3>
+          <p class="text-sm text-zinc-400">Superfans</p>
+          <div class="mt-4 text-3xl font-black">$49<span class="text-base text-zinc-400">/mo</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-zinc-300">
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> Early releases</li>
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> Exclusive sets</li>
+            <li class="flex items-center gap-2"><i data-feather="check" class="w-4 h-4 text-brand-500"></i> Monthly live Q&A</li>
+          </ul>
+          <a href="#" class="mt-6 inline-flex w-full justify-center rounded-xl bg-brand-500 hover:bg-brand-600 px-4 py-2 font-semibold">Buy on Store</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance -->
+  <section id="compliance" class="py-16 border-t border-white/10">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-black">Compliance & Notices</h2>
+      <div class="mt-6 space-y-4 text-sm text-zinc-300">
+        <div class="rounded-2xl border border-white/10 p-5 bg-zinc-900/50">
+          <h3 class="font-semibold">18 U.S.C. §2257 Record‑Keeping Compliance</h3>
+          <p class="mt-2 text-zinc-300">All visual depictions of actual sexually explicit conduct appearing on this website are of persons who were 18 years of age or older at the time of creation. Records required pursuant to 18 U.S.C. §2257 and 28 C.F.R. 75 are kept by the custodian of records:</p>
+          <p class="mt-2 text-zinc-400"><strong>Custodian of Records:</strong> <em>Your Legal Name</em>, <em>Street Address, City, State/Province, Country</em>, <em>email@example.com</em>.</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 p-5 bg-zinc-900/50">
+          <h3 class="font-semibold">DMCA / Copyright</h3>
+          <p class="mt-2">If you believe content infringes your copyright, send a DMCA notice to <em>dmca@example.com</em> with the required information (work identified, location of infringing material, contact info, good‑faith statement, and signature).</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 p-5 bg-zinc-900/50">
+          <h3 class="font-semibold">Report Illegal Content</h3>
+          <p class="mt-2">We have zero tolerance for content involving minors or non‑consenting activity. Report suspected illegal content immediately to <em>report@example.com</em> and to your local authorities.</p>
+        </div>
+        <p class="text-xs text-zinc-500">This section is informational and not legal advice. Consult counsel for jurisdiction‑specific requirements (e.g., Canadian/UK/EU rules, platform ToS, record‑keeping and labeling laws).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16 border-t border-white/10">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-black">FAQ</h2>
+      <div class="mt-6 divide-y divide-white/10">
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-zinc-200 hover:text-white">How do I replace media with my own?<i data-feather="chevron-down" class="w-5 h-5 transition group-open:rotate-180"></i></summary>
+          <div class="mt-2 text-zinc-400 text-sm">Edit the <code>MEDIA</code> array in the script near the bottom. Provide your file URLs. Thumbnails are optional for images.</div>
+        </details>
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-zinc-200 hover:text-white">How does Safe Mode work?<i data-feather="chevron-down" class="w-5 h-5 transition group-open:rotate-180"></i></summary>
+          <div class="mt-2 text-zinc-400 text-sm">When enabled, all thumbnails and the hero preview are blurred. Toggle it off to preview NSFW content.</div>
+        </details>
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-zinc-200 hover:text-white">Can I allow search engines to index this site?<i data-feather="chevron-down" class="w-5 h-5 transition group-open:rotate-180"></i></summary>
+          <div class="mt-2 text-zinc-400 text-sm">Yes—remove or change the <code>&lt;meta name="robots" content="noindex, nofollow" /&gt;</code> tag once you're ready.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-8 border-t border-white/10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-sm text-zinc-400 flex flex-col sm:flex-row justify-between gap-4">
+      <div>© <span id="year"></span> Creator NSFW — All rights reserved.</div>
+      <div class="flex gap-4">
+        <a href="#compliance" class="hover:text-white">2257</a>
+        <a href="#" class="hover:text-white">Terms</a>
+        <a href="#" class="hover:text-white">Privacy</a>
+        <a href="#faq" class="hover:text-white">Help</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur flex items-center justify-center p-4">
+    <button id="closeLightbox" aria-label="Close" class="absolute top-4 right-4 w-11 h-11 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 flex items-center justify-center"><i data-feather="x"></i></button>
+    <div class="max-w-5xl w-full">
+      <div class="rounded-2xl overflow-hidden border border-white/10 bg-black">
+        <img id="lbImg" alt="" class="hidden w-full h-auto max-h-[80vh] object-contain" />
+        <video id="lbVid" class="hidden w-full h-auto max-h-[80vh]" controls playsinline></video>
+      </div>
+      <div class="mt-3 text-center text-sm text-zinc-300" id="lbCaption"></div>
+    </div>
+  </div>
+
+  <!-- Trailer Modal -->
+  <div id="trailerModal" class="hidden fixed inset-0 z-[90] bg-black/80 backdrop-blur flex items-center justify-center p-4">
+    <button id="closeTrailer" aria-label="Close" class="absolute top-4 right-4 w-11 h-11 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 flex items-center justify-center"><i data-feather="x"></i></button>
+    <div class="max-w-4xl w-full">
+      <div class="rounded-2xl overflow-hidden border border-white/10 bg-black">
+        <video id="trailerVideo" class="w-full h-auto nsfw-blur" controls playsinline poster="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop"><source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4"></video>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data + Script -->
+  <script>
+    feather.replace();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Age gate
+    const AGE_KEY = 'adultConfirmedAt';
+    const ageGate = document.getElementById('ageGate');
+    const stored = localStorage.getItem(AGE_KEY);
+    const thirtyDays = 1000 * 60 * 60 * 24 * 30;
+    if (!stored || (Date.now() - Number(stored)) > thirtyDays * 6) { // 6 months
+      ageGate.classList.remove('hidden');
+    }
+    document.getElementById('enterAdult').addEventListener('click', () => {
+      if (document.getElementById('rememberAdult').checked) {
+        localStorage.setItem(AGE_KEY, String(Date.now()));
+      }
+      ageGate.classList.add('hidden');
+      document.body.classList.remove('safe-mode');
+    });
+
+    // Safe mode toggle
+    const safeToggle = document.getElementById('safeToggle');
+    const SAFE_KEY = 'nsfwSafeMode';
+    const savedSafe = localStorage.getItem(SAFE_KEY);
+    if (savedSafe === null) { document.body.classList.add('safe-mode'); safeToggle.checked = true; }
+    else if (savedSafe === '1') { document.body.classList.add('safe-mode'); safeToggle.checked = true; }
+    else { document.body.classList.remove('safe-mode'); }
+    safeToggle.addEventListener('change', () => {
+      if (safeToggle.checked) { document.body.classList.add('safe-mode'); localStorage.setItem(SAFE_KEY,'1'); }
+      else { document.body.classList.remove('safe-mode'); localStorage.setItem(SAFE_KEY,'0'); }
+    });
+
+    // Sample media (replace with your hosted files)
+    const MEDIA = [
+      { id:'v01', type:'video', cats:['solo'], title:'Shower Teaser', desc:'Short preview clip (NSFW).', src:'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4', thumb:'', tags:['teaser','solo'] },
+      { id:'v02', type:'video', cats:['collab'], title:'Studio Highlight', desc:'Preview reel.', src:'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4', thumb:'', tags:['collab','highlight'] },
+      { id:'p01', type:'photo', cats:['solo'], title:'Neon Portrait', desc:'Editorial set.', src:'https://images.unsplash.com/photo-1518441902114-736f62f5f9cf?q=80&w=1600&auto=format&fit=crop', thumb:'', tags:['portrait','neon'] },
+      { id:'p02', type:'photo', cats:['bts'], title:'Monochrome Set', desc:'Black & white mood.', src:'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?q=80&w=1600&auto=format&fit=crop', thumb:'', tags:['studio','bw','bts'] },
+      { id:'p03', type:'photo', cats:['collab'], title:'City Night', desc:'Street vibes.', src:'https://images.unsplash.com/photo-1504704911898-68304a7d2807?q=80&w=1600&auto=format&fit=crop', thumb:'', tags:['city','night'] },
+      { id:'v03', type:'video', cats:['bts'], title:'BTS Snippet', desc:'Behind the scenes.', src:'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', thumb:'', tags:['bts'] },
+    ];
+
+    const grid = document.getElementById('grid');
+    const template = document.getElementById('mediaTemplate');
+    const emptyState = document.getElementById('emptyState');
+
+    function renderCards(filter = 'all', query = '') {
+      grid.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      const items = MEDIA.filter(item => {
+        const typeMatch = ['video','photo','all'].includes(filter) ? (filter==='all' || item.type===filter) : true;
+        const catMatch = ['solo','collab','bts'].includes(filter) ? item.cats?.includes(filter) : true;
+        const text = (item.title + ' ' + item.desc + ' ' + (item.tags||[]).join(' ')).toLowerCase();
+        const queryMatch = q ? text.includes(q) : true;
+        return typeMatch && catMatch && queryMatch;
+      });
+
+      items.forEach(item => {
+        const node = template.content.cloneNode(true);
+        const card = node.querySelector('article');
+        card.dataset.id = item.id;
+        card.dataset.type = item.type;
+        card.dataset.tags = (item.tags||[]).join(',');
+        card.querySelector('h3').textContent = item.title;
+        card.querySelector('p').textContent = item.desc || '';
+        const tagsWrap = card.querySelector('div.flex.flex-wrap');
+        (item.tags||[]).slice(0,4).forEach(t=>{
+          const span = document.createElement('span');
+          span.className = 'rounded-full border border-white/10 px-2 py-0.5 text-zinc-300';
+          span.textContent = '#' + t;
+          tagsWrap.appendChild(span);
+        });
+        card.querySelector('.typeChip').textContent = item.type==='video'?'Video':'Photo';
+        const img = card.querySelector('img.thumb');
+        const vid = card.querySelector('video.thumbVid');
+        if (item.type==='photo') {
+          img.src = item.thumb || item.src; img.alt = item.title; img.classList.remove('hidden');
+          img.addEventListener('load', ()=> img.classList.add('is-loaded'));
+        } else {
+          if (item.thumb) { img.src=item.thumb; img.alt=item.title+' thumbnail'; img.classList.remove('hidden'); img.addEventListener('load', ()=> img.classList.add('is-loaded')); }
+          else { vid.innerHTML = `<source src="${item.src}#t=0.1" type="video/mp4">`; vid.classList.remove('hidden'); vid.addEventListener('loadeddata', ()=> vid.classList.add('is-loaded')) }
+        }
+        node.querySelector('button').addEventListener('click', ()=> openLightbox(item));
+        grid.appendChild(node);
+      });
+      emptyState.classList.toggle('hidden', items.length!==0);
+    }
+
+    // Filters
+    let currentFilter = 'all';
+    let currentQuery = '';
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => btn.addEventListener('click', ()=>{
+      filterBtns.forEach(b=> b.classList.remove('bg-white/10'));
+      btn.classList.add('bg-white/10');
+      currentFilter = btn.dataset.filter;
+      renderCards(currentFilter, currentQuery);
+    }));
+    document.getElementById('searchInput').addEventListener('input', e=>{
+      currentQuery = e.target.value; renderCards(currentFilter, currentQuery);
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbVid = document.getElementById('lbVid');
+    const lbCaption = document.getElementById('lbCaption');
+    function openLightbox(item){
+      lbCaption.textContent = item.title;
+      if (item.type==='photo'){
+        lbVid.pause(); lbVid.classList.add('hidden');
+        lbImg.src = item.src; lbImg.alt = item.title; lbImg.classList.remove('hidden');
+      } else {
+        lbImg.classList.add('hidden');
+        lbVid.innerHTML = `<source src="${item.src}" type="video/mp4">`;
+        lbVid.classList.remove('hidden'); lbVid.load(); lbVid.play();
+      }
+      lightbox.classList.remove('hidden');
+    }
+    function closeLightbox(){ lightbox.classList.add('hidden'); lbVid.pause(); }
+    document.getElementById('closeLightbox').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e=>{ if (e.target===lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e=>{ if (e.key==='Escape'){ closeLightbox(); closeTrailerModal(); }});
+
+    // Trailer modal
+    const trailerModal = document.getElementById('trailerModal');
+    const trailerVideo = document.getElementById('trailerVideo');
+    function openTrailerModal(){ trailerModal.classList.remove('hidden'); trailerVideo.currentTime = 0; trailerVideo.play(); }
+    function closeTrailerModal(){ trailerModal.classList.add('hidden'); trailerVideo.pause(); }
+    document.getElementById('openTrailerBtn').addEventListener('click', openTrailerModal);
+    document.getElementById('heroTrailerBtn').addEventListener('click', openTrailerModal);
+    document.getElementById('closeTrailer').addEventListener('click', closeTrailerModal);
+    trailerModal.addEventListener('click', e=>{ if (e.target===trailerModal) closeTrailerModal(); });
+
+    // Hero play
+    const heroVideo = document.getElementById('heroVideo');
+    document.getElementById('playHeroBtn').addEventListener('click', async ()=>{ try{ await heroVideo.play(); }catch(e){} });
+
+    // Copy link
+    document.getElementById('copyLinkBtn').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(location.href); alert('Page link copied!'); } catch(e){ prompt('Copy this link:', location.href); }
+    });
+
+    // Initial render
+    renderCards();
+  </script>
+</body>
+</html>
